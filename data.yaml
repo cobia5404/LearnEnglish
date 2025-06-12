@@ -22,3 +22,251 @@ lessons:
   - ja: "あなたならできると信じています。まだ信じられなくても、大丈夫です。"
     en: "I believe you can do it. If you don't believe me yet, that's okay."
     gaps: ["believe", "okay"]
+
+  - ja: "それでも、いくつかアドバイスをさせてください。"
+    en: "I'm going to give you some advice anyway."
+    gaps: ["advice"]
+
+  - ja: "まず、「英語を学ぶ」というのは巨大な目標です。あまりにも大きすぎるので、もっと小さなパーツに分解しましょう。"
+    en: "First of all, 'Learn English' is an enormous goal. It's way too big, so let's break it down into smaller parts."
+    gaps: ["enormous", "break", "smaller"]
+
+  - ja: "言語は大きいですが、学習まで大きくある必要はありません。"
+    en: "A language is big, but learning doesn't have to be."
+    gaps: ["language", "learning"]
+
+  - ja: "言語学習で最も重要なルールは、「熱心さよりも継続が力になる」ということです。"
+    en: "The most important rule of learning a language is: consistency is better than intensity."
+    gaps: ["important", "consistency", "intensity"]
+
+  - ja: "言い換えれば、週に一度まとめて時間をとるのではなく、毎日少しずつ英語に触れる時間を作ることです。"
+    en: "In other words, spend a little bit of time with English every day, not a big chunk of time once a week."
+    gaps: ["words", "chunk", "week"]
+
+  - ja: "いいですか？熱心さより、継続です。"
+    en: "Right? Consistency over intensity."
+    gaps: ["Consistency", "intensity"]
+
+  - ja: "ペラペラになるために、1日1時間も費やす必要はありません。おそらく、勉強のために1日1時間も確保できないでしょう。それはとても長い時間です。"
+    en: "You don't have to spend an hour a day to become fluent. You probably don't have an hour a day to study; that is a lot of time."
+    gaps: ["spend", "fluent", "study"]
+
+  - ja: "でも、15分ならどうですか？20分では？"
+    en: "But do you have fifteen minutes? Twenty minutes?"
+    gaps: ["fifteen", "Twenty"]
+
+  - ja: "もしかしたら、毎日20分もないかもしれません。仕事があり、家族がいて、時間はあまりないでしょう。"
+    en: "Maybe you don't have twenty minutes every day. You have work, you have family, you don't have a lot of time."
+    gaps: ["twenty", "work", "family"]
+
+  - ja: "では、どうしますか？英語を学ばない？いいえ、あなたは英語を学びたいのです。英語学習があなたの目標です。"
+    en: "Okay, then what? You don't learn English? No, you want to learn English. Learning English is your goal."
+    gaps: ["learn", "goal"]
+
+  - ja: "目標を達成するために、あなたが小さな変化を起こせることを私は知っています。"
+    en: "I know you can make small changes to achieve your goal."
+    gaps: ["make", "achieve"]
+
+  - ja: "これを試してみてください。「ハビット・スタッキング（習慣の積み重ね）」です。"
+    en: "Try this: habit stacking."
+    gaps: ["Try", "stacking"]
+
+  - ja: "私はジェームズ・クリアの『Atomic Habits』という本で、ハビット・スタッキングについて学びました。"
+    en: "I learned about habit stacking from this book, Atomic Habits by James Clear."
+    gaps: ["learned", "book", "Clear"]
+
+  - ja: "ハビット・スタッキングとは、すでにある習慣に、新しい習慣を付け加えることです。"
+    en: "Habit stacking means to take a habit you already do and add a new habit to it."
+    gaps: ["means", "already", "add"]
+
+  - ja: "例を挙げましょう。あなたは毎日歯を磨きますよね？もちろん、そうでしょう。"
+    en: "I'll give you an example. You brush your teeth every day, right? Of course you do."
+    gaps: ["example", "brush", "teeth"]
+
+  - ja: "歯磨きは、あなたが毎日簡単に行っていることです。"
+    en: "Okay, brushing your teeth is something you already do every day, easily."
+    gaps: ["brushing", "easily"]
+
+  - ja: "そこに、英語のポッドキャストを聞くといった新しい習慣を取り入れ、歯磨きの上に積み重ねるのです。"
+    en: "So take a new habit, like listening to an English podcast, and stack it on top of brushing your teeth."
+    gaps: ["habit", "listening", "podcast"]
+
+  - ja: "歯を磨きながら、英語のポッドキャストを聞く。"
+    en: "While you brush your teeth, listen to an English podcast."
+    gaps: ["While", "listen"]
+
+  - ja: "これがハビット・スタッキングです。そして、これは素晴らしいテクニックです。"
+    en: "That's habit stacking. And it's a great technique."
+    gaps: ["stacking", "technique"]
+
+  - ja: "あなたが毎日すでに行っている習慣を考え、「どうすればこれに英語を加えられるだろう？」と考えてみてください。"
+    en: "Think about the habits you already do every day, and think, how can I add English to it?"
+    gaps: ["habits", "add"]
+
+  - ja: "もう一つの素晴らしいテクニック？「デッドタイム（すきま時間）」の活用です。"
+    en: "Another great technique? Using dead time."
+    gaps: ["technique", "dead"]
+
+  - ja: "デッドタイムとは、何かを待っている時間のことです。"
+    en: "Dead time is when you are waiting for something."
+    gaps: ["waiting", "something"]
+
+  - ja: "例えば、病院の待合室で待っている時間。食べ物を買うために列に並んでいる時間。会議が始まるのを待っている時間などです。"
+    en: "An example would be like waiting at the doctor's office. Waiting in line to get food. Waiting for a meeting to start."
+    gaps: ["example", "office", "meeting"]
+
+  - ja: "あなたは、思っている以上に一日に多くのデッドタイムを持っています。待っているすべての時間について考えてみてください。"
+    en: "You probably have more dead time in your day than you might think. Think about all the time you spend waiting."
+    gaps: ["probably", "think", "spend"]
+
+  - ja: "たとえDuolingoであっても、その時間を英語のために使いましょう。"
+    en: "Use it for English, even if it's Duolingo."
+    gaps: ["Use", "even"]
+
+  - ja: "覚えておいてください：週に一度まとめてやるより、毎日少しずつ。熱心さより、継続です。"
+    en: "Remember: a little bit every day is better than a big chunk once a week. Consistency over intensity."
+    gaps: ["Remember", "chunk", "Consistency"]
+
+  - ja: "でも、こう考えているかもしれません。「わかった、でも具体的に何をすればいいの？」と。"
+    en: "But maybe you're thinking, okay but what do I do?"
+    gaps: ["thinking", "do"]
+
+  - ja: "良い質問ですね。私の答えは、「あなたの目標達成に役立ち、かつ面白いと感じることなら何でも」です。"
+    en: "Good question. My answer is: whatever you find interesting and will help you with your goal."
+    gaps: ["question", "interesting", "goal"]
+
+  - ja: "例えば、英語で会話をしたいとしましょう。では、それができるようになるためには何が必要でしょうか？"
+    en: "Let's say you want to have conversations in English. Okay, what do you need to be able to do that?"
+    gaps: ["conversations", "need", "able"]
+
+  - ja: "語彙を学び、ネイティブスピーカーの英語を聞き、聞いたことを練習する必要があります。"
+    en: "You need to learn some vocabulary, listen to native speakers, and practice what you hear."
+    gaps: ["vocabulary", "native", "practice"]
+
+  - ja: "では、何が面白いと感じるか考えてみましょう。映画が好きですか？テレビシリーズ？本？YouTube動画？記事？"
+    en: "So now, think about what you find interesting. Do you like movies? TV series? Books? YouTube videos? Articles?"
+    gaps: ["think", "series", "Articles"]
+
+  - ja: "いいでしょう、それらを見てみましょう。聞いて、真似して。色々な教材を試して、一番好きなものを見つけてください。"
+    en: "Okay, watch those things. Listen. Copy. Try different resources to find what you like best."
+    gaps: ["watch", "Copy", "resources"]
+
+  - ja: "観るのが好きなら、Language ReactorやLingoPie。読むのが好きなら、Olly Richards。記事ならEngooを試してみてください。"
+    en: "If you like watching, try Language Reactor or LingoPie. If you like reading, try Olly Richards. Articles? Try Engoo."
+    gaps: ["watching", "reading", "Engoo"]
+
+  - ja: "唯一無二の最高の学習法というものはありません。実験してください。好きなもの、自分の脳に一番合うものを見つけて、それを毎日少しずつ続けるのです。"
+    en: "There is no one best way to learn. Experiment. Find what you like, what works best for your brain, then keep doing that. A little bit every day."
+    gaps: ["best", "Experiment", "brain"]
+
+  - ja: "もちろん、継続は言うは易く行うは難しです。"
+    en: "Of course, consistency is easier said than done."
+    gaps: ["consistency", "easier", "done"]
+
+  - ja: "言語学習は習慣です。英語を使いたいなら、毎日練習しなければなりません。"
+    en: "Learning a language is a habit. If you want to use English, you have to practice every day."
+    gaps: ["habit", "practice", "day"]
+
+  - ja: "清潔で健康な歯が欲しければ、毎日歯を磨く必要があるのと同じです。"
+    en: "Just like if you want clean, healthy teeth, you need to brush them every day."
+    gaps: ["clean", "healthy", "brush"]
+
+  - ja: "でも、あなたは忙しい。時には忘れることもあるでしょう。時には、英語が一日で最も重要なことではないかもしれません。"
+    en: "But you're busy. Sometimes you forget. Sometimes English is not the most important thing in your day."
+    gaps: ["busy", "forget", "important"]
+
+  - ja: "ええ、わかります。だから、1日休んでもいいですが、2日続けて休まないでください。"
+    en: "Okay, I hear you. So, miss one day, but don't miss two."
+    gaps: ["hear", "miss", "two"]
+
+  - ja: "1日休んだら、次の日には習慣に戻るのです。毎日は新しい一日です。"
+    en: "Miss one, return to your habit the next day. Every day is a new day."
+    gaps: ["return", "habit", "day"]
+
+  - ja: "ジェームズ・クリアによれば、良い習慣には4つの要素があるべきです：はっきりしている、魅力的である、簡単である、そして満足できること。"
+    en: "According to James Clear, a good habit should be four things: obvious, attractive, easy, and satisfying."
+    gaps: ["According", "obvious", "satisfying"]
+
+  - ja: "もしあなたの英語学習の習慣をこれら4つの要素を満たすようにデザインすれば、毎日学習できるようになるでしょう。"
+    en: "If you design your English habits to be these four things, you will be able to learn every day."
+    gaps: ["design", "habits", "learn"]
+
+  - ja: "最終的な目標は、英語をあなたの生活の一部にすることです。小さく始めましょう。10分です。"
+    en: "The ultimate goal is for you to make English part of your life. Start small. Ten minutes."
+    gaps: ["ultimate", "make", "small"]
+
+  - ja: "英語の動画を観る。そしてそのことは忘れて、一日を終える。次の日も同じことをします。"
+    en: "Watch a video in English. Then forget about it. Finish your day. Next day, same thing."
+    gaps: ["Watch", "forget", "Finish"]
+
+  - ja: "10分です。続けてください。10分が短すぎると感じるようになるまで、10分の視聴を続けます。"
+    en: "Ten minutes. Keep going. Keep watching ten minutes until ten minutes feels too small."
+    gaps: ["Ten", "going", "small"]
+
+  - ja: "もっとやりましょう。20分。1日、5日、30日と。"
+    en: "Do more. Twenty minutes. One day, five days, thirty days."
+    gaps: ["more", "Twenty", "days"]
+
+  - ja: "20分が短すぎると感じますか？もっとやりましょう。これを繰り返します。"
+    en: "Twenty minutes feels too small? Do more. Etc. Etc."
+    gaps: ["Twenty", "small", "more"]
+
+  - ja: "英語について考えてみてください。好奇心を持ちましょう。好奇心を持つことが、継続の助けになります。"
+    en: "Think about English. Be curious. Being curious will help you keep going."
+    gaps: ["Think", "curious", "going"]
+
+  - ja: "自分にとって面白いことを見つける。それが、本当に本当に重要なのです。"
+    en: "Find things that are interesting to you. That's so, so important."
+    gaps: ["Find", "interesting", "important"]
+
+  - ja: "誰でも言語を学ぶことができます。なぜわかるかって？私たちは皆、すでに一つの言語を学んでいるからです。"
+    en: "Everyone can learn a language. Do you know how I know? Because we have all already learned a language."
+    gaps: ["Everyone", "learn", "learned"]
+
+  - ja: "私たちは皆、ある言語のネイティブスピーカーです。一度できたのです。もう一度できます。"
+    en: "We are all native speakers of a language. We did it once. We can do it again."
+    gaps: ["native", "speakers", "again"]
+
+  - ja: "ここに秘訣があります：自分ならできると信じなければなりません。"
+    en: "Here's the secret: you have to believe you can do it."
+    gaps: ["secret", "believe"]
+
+  - ja: "もし「絶対に無理だ。私に言語なんて学べない」と思っているなら…その通りになってしまうでしょう。"
+    en: "If you think 'absolutely not. I can't learn a language' then…you're right."
+    gaps: ["absolutely", "learn", "right"]
+
+  - ja: "でも、挑戦してほしいのです。たとえ自信がなくても、不確かでも。"
+    en: "But I want you to try. Even if you are unsure, uncertain."
+    gaps: ["try", "unsure", "uncertain"]
+
+  - ja: "「もしかしたらできないかもしれない」と思っても、とにかくやってみてください。毎日。毎日少しずつ。"
+    en: "If you think, 'maybe I can't do it' do it anyway. Every day. A little bit every day."
+    gaps: ["maybe", "anyway", "day"]
+
+  - ja: "流暢さとは旅のようなものです。最終目的地ではありません。"
+    en: "Fluency is a journey. It is not the final destination."
+    gaps: ["Fluency", "journey", "destination"]
+
+  - ja: "ネイティブスピーカーでさえ、毎日自分の言語を学び続けています。"
+    en: "Native speakers continue to learn their language every day."
+    gaps: ["Native", "continue", "language"]
+
+  - ja: "私が先日何を学んだか知っていますか？「Done and dusted（一件落着）」です。それを学んだんですよ！私は英語のネイティブスピーカーなのに。"
+    en: "You know what I learned the other day? 'Done and dusted.' I learned that! And I'm a native speaker of English."
+    gaps: ["learned", "dusted", "native"]
+
+  - ja: "歳を取りすぎているなんてことはありません。あなたは十分に賢い。あなたならできます。"
+    en: "You're not too old. You are smart enough. You can do it."
+    gaps: ["old", "smart", "do"]
+
+  - ja: "私はそう信じています。あなたを信じています。"
+    en: "I believe that. I believe in you."
+    gaps: ["believe", "believe"]
+
+  - ja: "あなたの時が来ました。今です。始めたいなら、今すぐ始めてください。"
+    en: "This is your time. Now. If you want to start, start now."
+    gaps: ["time", "start", "now"]
+
+  - ja: "続けたいなら、できますよ。きっと目標にたどり着きます。毎日、少しずつ。"
+    en: "If you want to keep going, you can do it. You will get there. A little bit every day."
+    gaps: ["going", "there", "day"]
