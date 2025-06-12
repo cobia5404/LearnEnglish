@@ -2,6 +2,11 @@ import streamlit as st
 import re
 import yaml
 import random
+import os
+import tempfile
+from gtts import gTTS
+import base64
+import hashlib
 
 # テキスト正規化関数
 def normalize_text(text):
@@ -23,34 +28,53 @@ if 'current_lesson' not in st.session_state:
     st.session_state.current_lesson = 0
 
 # ---------------------------
-# 読み上げ関数（英語・日本語対応）
+# gTTSを使用した読み上げ関数（英語・日本語対応）
 # ---------------------------
-def speak_text(text: str, lang="en-US"):
-    segments = re.split(r'(?<=[。．！？!?]|[.?!])\s*|\n+', text)
-    segments = [seg.strip() for seg in segments if seg.strip()]
-    js_array = "[" + ", ".join([f'"{s}"' for s in segments]) + "]"
+def text_to_speech(text, lang="en"):
+    """
+    gTTSを使用してテキストを音声に変換し、base64エンコードされたオーディオデータを返す
+    """
+    try:
+        # 一時ファイルを作成
+        with tempfile.NamedTemporaryFile(delete=False, suffix=".mp3") as fp:
+            temp_filename = fp.name
 
-    st.components.v1.html(f"""
-        <script>
-        const segments = {js_array};
-        let index = 0;
-        function speakSegment() {{
-            if (index >= segments.length) return;
-            const utterance = new SpeechSynthesisUtterance(segments[index]);
-            utterance.lang = "{lang}";
-            utterance.onend = () => {{
-                index++;
-                speakSegment();
-            }};
-            speechSynthesis.speak(utterance);
-        }}
-        function speakAll() {{
-            index = 0;
-            speakSegment();
-        }}
-        </script>
-        <button onclick="speakAll()">🔊 読み上げ（{lang}）</button>
-    """, height=40)
+        # gTTSで音声を生成
+        tts = gTTS(text=text, lang=lang, slow=False)
+        tts.save(temp_filename)
+
+        # 音声ファイルを読み込み
+        with open(temp_filename, "rb") as audio_file:
+            audio_data = audio_file.read()
+
+        # 一時ファイルを削除
+        os.unlink(temp_filename)
+
+        # base64エンコード
+        audio_base64 = base64.b64encode(audio_data).decode()
+
+        return audio_base64
+    except Exception as e:
+        st.error(f"音声生成エラー: {e}")
+        return None
+
+def speak_text(text: str, lang="en", label="", key=None):
+    """
+    gTTSを使用した音声読み上げ機能（テキスト下に1つだけプレーヤー、重複表示なし、ボタンなし）
+    """
+    lang_map = {
+        "en-US": "en",
+        "ja-JP": "ja"
+    }
+    gtts_lang = lang_map.get(lang, lang)
+    if not text.strip():
+        return
+    if key is None:
+        key = hashlib.md5((text+lang).encode()).hexdigest()
+    st.markdown(f"**{label}** {text}")
+    audio_base64 = text_to_speech(text, gtts_lang)
+    if audio_base64:
+        st.audio(f"data:audio/mp3;base64,{audio_base64}", format="audio/mp3")
 
 # ---------------------------
 # メインアプリケーション
@@ -79,7 +103,6 @@ if mode == "📚 段階的学習":
     # レッスン選択
     col1, col2 = st.columns([3, 1])
     with col1:
-        # 例文番号（1〜）で表示
         lesson_no = st.number_input("例文番号（1〜）", 1, len(lessons), 1)
         lesson_index = lesson_no - 1
     with col2:
@@ -94,26 +117,21 @@ if mode == "📚 段階的学習":
 
     lesson = lessons[lesson_index]
 
-    # start_gap_test_{lesson_index} を必ず初期化
     if f"start_gap_test_{lesson_index}" not in st.session_state:
         st.session_state[f"start_gap_test_{lesson_index}"] = False
 
-    # 完了状態の表示
     if lesson_index in st.session_state.completed_lessons:
         st.success(f"✅ レッスン {lesson_index} は完了済みです")
 
     # ステップ1: 英文表示（音声ボタンは常に表示）
     st.markdown("### 📖 ステップ1: 英文を確認")
     if not st.session_state[f"start_gap_test_{lesson_index}"]:
-        st.markdown(f"**英文:** {lesson['en']}")
-    speak_text(lesson['en'], lang="en-US")
+        speak_text(lesson['en'], lang="en-US", label="英文")
 
     # ステップ2・3は穴埋めテスト開始前のみ表示
     if not st.session_state[f"start_gap_test_{lesson_index}"]:
-        # ステップ2: 日本語訳表示
         st.markdown("### 🇯🇵 ステップ2: 日本語訳を確認")
-        st.markdown(f"**日本語訳:** {lesson['ja']}")
-        speak_text(lesson['ja'], lang="ja-JP")
+        speak_text(lesson['ja'], lang="ja-JP", label="日本語訳")
 
         # ステップ3: タイピング練習
         st.markdown("### ⌨️ ステップ3: タイピング練習")
@@ -181,8 +199,7 @@ elif mode == "🎯 穴埋めテスト":
         st.session_state[f"start_gap_test_{lesson_index}"] = False
 
     st.markdown("### 🇯🇵 和訳：")
-    st.markdown(lesson["ja"])
-    speak_text(lesson["ja"], lang="ja-JP")
+    speak_text(lesson["ja"], lang="ja-JP", label="和訳")
 
     # 穴埋め表示
     template = lesson["en"]
@@ -219,8 +236,7 @@ elif mode == "🎯 穴埋めテスト":
     # 答え表示＋読み上げ
     if st.button("👁 正解をすべて表示"):
         st.markdown("### ✅ 正解英文：")
-        st.markdown(lesson["en"])
-        speak_text(lesson["en"], lang="en-US")
+        speak_text(lesson["en"], lang="en-US", label="正解英文")
 
 else:  # ランダム学習モード
     st.markdown("## 🎲 ランダム学習モード")
@@ -240,11 +256,10 @@ else:  # ランダム学習モード
 
         # 簡潔な学習フロー
         st.markdown("### 📖 英文")
-        st.markdown(lesson['en'])
-        speak_text(lesson['en'], lang="en-US")
+        speak_text(lesson['en'], lang="en-US", label="英文")
 
         st.markdown("### 🇯🇵 日本語訳")
-        st.markdown(lesson['ja'])
+        speak_text(lesson['ja'], lang="ja-JP", label="日本語訳")
 
         # 穴埋めテスト
         st.markdown("### 🎯 穴埋めテスト")
