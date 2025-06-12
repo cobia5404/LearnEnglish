@@ -1,0 +1,24 @@
+lessons:
+  - ja: "あなたが何を考えているか、きっとわかります。"
+    en: "I know what you're probably thinking:"
+    gaps: ["thinking"]
+
+  - ja: "英語を学びたい。英語を上達させたい。英語がペラペラになりたい。"
+    en: "I want to learn English. I want to improve my English. I want to be fluent in English."
+    gaps: ["learn", "improve", "fluent"]
+
+  - ja: "でも、忙しすぎる。適切なスキルがない。どうやって始めたらいいかわからない。"
+    en: "But I'm too busy. I don't have the right skills. I don't know how to start."
+    gaps: ["busy", "skills", "start"]
+
+  - ja: "その気持ち、わかります。私に任せてください。"
+    en: "I hear you and I got you."
+    gaps: ["hear", "got"]
+
+  - ja: "私は2019年から英語の先生をしています。たくさんの生徒を教えてきました。"
+    en: "I've been an English teacher since 2019. I have taught a lot of students."
+    gaps: ["teacher", "taught", "students"]
+
+  - ja: "あなたならできると信じています。まだ信じられなくても、大丈夫です。"
+    en: "I believe you can do it. If you don't believe me yet, that's okay."
+    gaps: ["believe", "okay"]
