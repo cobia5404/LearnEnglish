@@ -60,7 +60,7 @@ def text_to_speech(text, lang="en"):
 
 def speak_text(text: str, lang="en", label="", key=None):
     """
-    gTTSを使用した音声読み上げ機能（テキスト下に1つだけプレーヤー、重複表示なし、ボタンなし）
+    gTTSを使用した音声読み上げ機能（テキスト下に1つだけプレーヤー、ボタンなし、labelが空ならテキスト非表示）
     """
     lang_map = {
         "en-US": "en",
@@ -71,7 +71,9 @@ def speak_text(text: str, lang="en", label="", key=None):
         return
     if key is None:
         key = hashlib.md5((text+lang).encode()).hexdigest()
-    st.markdown(f"**{label}** {text}")
+    # labelが空でなければテキスト表示
+    if label:
+        st.markdown(f"**{label}**")
     audio_base64 = text_to_speech(text, gtts_lang)
     if audio_base64:
         st.audio(f"data:audio/mp3;base64,{audio_base64}", format="audio/mp3")
@@ -101,63 +103,72 @@ if mode == "📚 段階的学習":
     st.markdown("英文を覚えるための段階的な学習を行います。")
 
     # レッスン選択
-    col1, col2 = st.columns([3, 1])
-    with col1:
-        lesson_no = st.number_input("例文番号（1〜）", 1, len(lessons), 1)
-        lesson_index = lesson_no - 1
-    with col2:
-        if st.button("🎲 ランダム選択"):
-            available_lessons = [i for i in range(len(lessons)) if i not in st.session_state.completed_lessons]
-            if available_lessons:
-                lesson_index = random.choice(available_lessons)
-                st.session_state.current_lesson = lesson_index
-                st.rerun()
-            else:
-                st.info("すべてのレッスンが完了しています！")
-
+    if 'current_lesson' not in st.session_state:
+        st.session_state.current_lesson = 0
+    lesson_index = int(st.session_state.current_lesson)
     lesson = lessons[lesson_index]
+    st.markdown(f"#### 例文番号（1〜）: {lesson_index + 1}")
 
-    if f"start_gap_test_{lesson_index}" not in st.session_state:
-        st.session_state[f"start_gap_test_{lesson_index}"] = False
+    # ランダム選択ボタン
+    if st.button("🎲 ランダム選択"):
+        available_lessons = [i for i in range(len(lessons)) if i not in st.session_state.completed_lessons]
+        if available_lessons:
+            lesson_index = random.choice(available_lessons)
+            st.session_state.current_lesson = lesson_index
+            st.rerun()
+        else:
+            st.info("すべてのレッスンが完了しています！")
+
+    # セッション状態の初期化
+    if f"show_hint_{lesson_index}" not in st.session_state:
+        st.session_state[f"show_hint_{lesson_index}"] = False
+    if f"show_gap_{lesson_index}" not in st.session_state:
+        st.session_state[f"show_gap_{lesson_index}"] = False
+    if f"typing_checked_{lesson_index}" not in st.session_state:
+        st.session_state[f"typing_checked_{lesson_index}"] = False
+    if f"typing_correct_{lesson_index}" not in st.session_state:
+        st.session_state[f"typing_correct_{lesson_index}"] = False
 
     if lesson_index in st.session_state.completed_lessons:
         st.success(f"✅ レッスン {lesson_index} は完了済みです")
 
-    # ステップ1: 英文表示（音声ボタンは常に表示）
-    st.markdown("### 📖 ステップ1: 英文を確認")
-    if not st.session_state[f"start_gap_test_{lesson_index}"]:
-        speak_text(lesson['en'], lang="en-US", label="英文")
+    # ステップ1: 英文の音声のみ（テキスト非表示）
+    st.markdown("### 📖 ステップ1: 英文を聞く")
+    speak_text(lesson['en'], lang="en-US", label="")
 
-    # ステップ2・3は穴埋めテスト開始前のみ表示
-    if not st.session_state[f"start_gap_test_{lesson_index}"]:
-        st.markdown("### 🇯🇵 ステップ2: 日本語訳を確認")
-        speak_text(lesson['ja'], lang="ja-JP", label="日本語訳")
+    # ステップ2: 日本語ヒント＋タイピング練習
+    st.markdown("### 💡 ステップ2: 日本語ヒント & タイピング練習")
+    st.info(f"日本語訳: {lesson['ja']}")
+    user_typing = st.text_area("英文を入力してください:", height=100, key=f"typing_practice_{lesson_index}")
+    if st.button("✅ タイピングチェック", key=f"typing_check_btn_{lesson_index}"):
+        st.session_state[f"typing_checked_{lesson_index}"] = True
+        if normalize_text(user_typing) == normalize_text(lesson['en']):
+            st.session_state[f"typing_correct_{lesson_index}"] = True
+        else:
+            st.session_state[f"typing_correct_{lesson_index}"] = False
 
-        # ステップ3: タイピング練習
-        st.markdown("### ⌨️ ステップ3: タイピング練習")
-        st.markdown("英文を入力して覚えましょう。")
-        user_typing = st.text_area("英文を入力してください:", height=100, key="typing_practice")
-        typing_correct = False
-        if st.button("✅ タイピングチェック"):
-            if normalize_text(user_typing) == normalize_text(lesson['en']):
-                st.success("🎉 完璧です！正しく入力できました！")
-                typing_correct = True
-            else:
-                st.error("❌ 間違いがあります。もう一度確認してください。")
-                st.markdown(f"**正解:** {lesson['en']}")
+    if st.session_state[f"typing_checked_{lesson_index}"]:
+        if st.session_state[f"typing_correct_{lesson_index}"]:
+            st.success("🎉 完璧です！正しく入力できました！")
+            st.session_state.completed_lessons.add(lesson_index)
+            if st.button("次の問題へ", key=f"next_lesson_{lesson_index}"):
+                # セッションフラグをリセット
+                st.session_state[f"show_gap_{lesson_index}"] = False
+                st.session_state[f"giveup_{lesson_index}"] = False
+                st.session_state[f"typing_checked_{lesson_index}"] = False
+                st.session_state[f"typing_correct_{lesson_index}"] = False
+                # 入力欄のリセットはしない（エラー回避のため）
+                st.session_state.current_lesson = (lesson_index + 1) % len(lessons)
+                st.rerun()
+        else:
+            st.error("❌ 間違いがあります。もう一度確認してください。")
+            # 正解は表示しない
+            if st.button("▶️ 穴埋めに進む", key=f"to_gap_{lesson_index}"):
+                st.session_state[f"show_gap_{lesson_index}"] = True
 
-    # 穴埋めテスト開始フラグ
-    if f"start_gap_test_{lesson_index}" not in st.session_state:
-        st.session_state[f"start_gap_test_{lesson_index}"] = False
-
-    if not st.session_state[f"start_gap_test_{lesson_index}"]:
-        if st.button("▶️ 穴埋めテストを始める", key=f"start_gap_test_btn_{lesson_index}"):
-            st.session_state[f"start_gap_test_{lesson_index}"] = True
-            st.rerun()
-
-    # ステップ4: 穴埋めテスト（開始フラグがTrueのときのみ表示）
-    if st.session_state[f"start_gap_test_{lesson_index}"]:
-        st.markdown("### 🎯 ステップ4: 穴埋めテスト")
+    # ステップ3: 穴埋めテスト（フラグがTrueのときのみ表示）
+    if st.session_state[f"show_gap_{lesson_index}"]:
+        st.markdown("### 🎯 ステップ3: 穴埋めテスト")
         template = lesson["en"]
         gaps = lesson["gaps"]
         for i, word in enumerate(gaps):
@@ -165,6 +176,8 @@ if mode == "📚 段階的学習":
         st.markdown(f"**穴埋め英文:** {template}")
         for i in range(len(gaps)):
             st.text_input(f"{i+1}. 空欄に入る単語", key=f"gap_learning_{lesson_index}_{i}")
+        if f"giveup_{lesson_index}" not in st.session_state:
+            st.session_state[f"giveup_{lesson_index}"] = False
         if st.button("✅ 穴埋めチェック", key=f"check_gap_learning_{lesson_index}"):
             user_answers = [
                 st.session_state.get(f"gap_learning_{lesson_index}_{i}", "").strip()
@@ -177,13 +190,33 @@ if mode == "📚 段階的学習":
                     st.success(f"{i+1}. 正解！({correct_word})")
                     correct += 1
                 else:
-                    st.error(f"{i+1}. 不正解 ❌（正解: {correct_word}）")
+                    st.error(f"{i+1}. 不正解 ❌")
             st.info(f"正解数：{correct} / {len(gaps)}")
             if correct == len(gaps):
                 st.success("🎉 おめでとうございます！このレッスンを完了しました！")
                 st.session_state.completed_lessons.add(lesson_index)
-                if st.button("次の問題へ", key=f"next_lesson_{lesson_index}"):
+                if st.button("次の問題へ", key=f"next_lesson_gap_{lesson_index}"):
+                    # セッションフラグをリセット
+                    st.session_state[f"show_gap_{lesson_index}"] = False
+                    st.session_state[f"giveup_{lesson_index}"] = False
+                    st.session_state[f"typing_checked_{lesson_index}"] = False
+                    st.session_state[f"typing_correct_{lesson_index}"] = False
+                    st.session_state.current_lesson = (lesson_index + 1) % len(lessons)
                     st.rerun()
+        # ギブアップボタン
+        if st.button("ギブアップ（正解を表示）", key=f"giveup_btn_{lesson_index}"):
+            st.session_state[f"giveup_{lesson_index}"] = True
+        if st.session_state[f"giveup_{lesson_index}"]:
+            st.info(f"正解: {', '.join(gaps)}")
+            # 「次の問題へ」ボタンを表示
+            if st.button("次の問題へ", key=f"next_lesson_giveup_{lesson_index}"):
+                st.session_state.completed_lessons.add(lesson_index)
+                st.session_state[f"show_gap_{lesson_index}"] = False
+                st.session_state[f"giveup_{lesson_index}"] = False
+                st.session_state[f"typing_checked_{lesson_index}"] = False
+                st.session_state[f"typing_correct_{lesson_index}"] = False
+                st.session_state.current_lesson = (lesson_index + 1) % len(lessons)
+                st.rerun()
 
 elif mode == "🎯 穴埋めテスト":
     st.markdown("## 🎯 穴埋めテストモード")
