@@ -55,7 +55,7 @@ def speak_text(text: str, lang="en-US"):
 # ---------------------------
 # メインアプリケーション
 # ---------------------------
-st.title("✍️ 英作文トレーニング + 🔊 読み上げ")
+st.title("✍️ 英文トレーニング")
 
 # 進捗表示
 completed_count = len(st.session_state.completed_lessons)
@@ -79,7 +79,9 @@ if mode == "📚 段階的学習":
     # レッスン選択
     col1, col2 = st.columns([3, 1])
     with col1:
-        lesson_index = st.number_input("例文番号（0〜）", 0, len(lessons)-1, st.session_state.current_lesson)
+        # 例文番号（1〜）で表示
+        lesson_no = st.number_input("例文番号（1〜）", 1, len(lessons), 1)
+        lesson_index = lesson_no - 1
     with col2:
         if st.button("🎲 ランダム選択"):
             available_lessons = [i for i in range(len(lessons)) if i not in st.session_state.completed_lessons]
@@ -169,7 +171,9 @@ elif mode == "🎯 穴埋めテスト":
     st.markdown("## 🎯 穴埋めテストモード")
     st.markdown("直接穴埋めテストを行います。")
 
-    lesson_index = st.number_input("例文番号（0〜）", 0, len(lessons)-1, 0)
+    # 例文番号（1〜）で表示
+    lesson_no = st.number_input("例文番号（1〜）", 1, len(lessons), 1)
+    lesson_index = lesson_no - 1
     lesson = lessons[lesson_index]
 
     # start_gap_test_{lesson_index} を必ず初期化
