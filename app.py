@@ -7,6 +7,7 @@ import tempfile
 from gtts import gTTS
 import base64
 import hashlib
+from streamlit_option_menu import option_menu
 
 # テキスト正規化関数
 def normalize_text(text):
@@ -81,7 +82,7 @@ def speak_text(text: str, lang="en", label="", key=None):
 # ---------------------------
 # メインアプリケーション
 # ---------------------------
-st.title("✍️ 英文トレーニング")
+st.title("✍️ 英文聞き取りトレーニング")
 
 # 進捗表示
 completed_count = len(st.session_state.completed_lessons)
@@ -99,23 +100,54 @@ mode = st.sidebar.selectbox(
 )
 
 if mode == "📚 段階的学習":
-    st.markdown("## 📚 段階的学習モード")
-    st.markdown("英文を覚えるための段階的な学習を行います。")
+    # st.markdown("## 📚 段階的学習モード")
+    # st.markdown("英文を覚えるための段階的な学習を行います。")
 
     lesson_index = int(st.session_state.current_lesson)
     lesson = lessons[lesson_index]
 
-    st.markdown(f"#### 例文番号（1〜）: {lesson_index + 1}")
+    # 例文番号やモード名などの表示を省略し、1行で表示
+    st.markdown(f"### 👂 英文読み上げ ({lesson_index + 1} / {len(lessons)})")
 
-    # 1. 英文を聞く
-    st.markdown("### 📖 ステップ1: 英文を聞く")
     speak_text(lesson['en'], lang="en-US", label="")
 
-    # 2. 出題方法を選ぶ
-    mode_choice = st.radio("出題方法を選んでください", ["全文タイピング", "穴埋め"], key=f"mode_choice_{lesson_index}")
+    # グローバルな選択状態を使う
+    if "mode_choice_global" not in st.session_state:
+        st.session_state["mode_choice_global"] = "全文タイピング"
+
+    st.markdown("<div style='font-size: 0.95em; color: #666; margin-bottom: 0.2em;'>出題方法を選択してください</div>", unsafe_allow_html=True)
+    mode_choice = option_menu(
+        None,
+        ["全文タイピング", "穴埋め"],
+        icons=["keyboard", "list-ul"],
+        menu_icon=None,
+        orientation="horizontal",
+        default_index=0 if st.session_state["mode_choice_global"] == "全文タイピング" else 1,
+        styles={
+            "container": {"padding": "0 100px !important", "background-color": "#fff0", "justify-content": "center", "gap": "0"},
+            "icon": {"color": "#6c757d", "font-size": "18px"},
+            "nav-link": {
+                "font-size": "18px",
+                "text-align": "center",
+                "margin": "0 2px",
+                "color": "#333",
+                "background-color": "#fff0",
+                "border": "1.5px solid #ddd",
+                "border-radius": "6px",
+                "padding": "4px 0",
+                "width": "200px",
+            },
+            "nav-link-selected": {
+                "background-color": "#e6f0fa",
+                "color": "#1976d2",
+                "border": "2px solid #1976d2",
+            },
+        }
+    )
+    st.session_state["mode_choice_global"] = mode_choice
 
     # 3. ヒントボタン
-    if st.button("💡 ヒント", key=f"hint_btn_{lesson_index}"):
+    if st.button("💡 ヒント(日本語訳)", key=f"hint_btn_{lesson_index}"):
         st.session_state[f"show_hint_{lesson_index}"] = True
     if st.session_state.get(f"show_hint_{lesson_index}", False):
         st.info(f"日本語訳: {lesson['ja']}")
@@ -127,39 +159,63 @@ if mode == "📚 段階的学習":
     if mode_choice == "全文タイピング":
         st.markdown("### ✍️ 全文タイピング")
         user_typing = st.text_area("英文を入力してください:", height=100, key=f"typing_practice_{lesson_index}")
-        if st.button("✅ タイピングチェック", key=f"typing_check_btn_{lesson_index}"):
-            if normalize_text(user_typing) == normalize_text(lesson['en']):
-                st.session_state[f"typing_correct_{lesson_index}"] = True
-                st.success("🎉 正解です！")
-            else:
-                st.session_state[f"typing_correct_{lesson_index}"] = False
-                st.error("❌ 間違いがあります。もう一度確認してください。")
+
+        col1, col2 = st.columns(2)
+        with col1:
+            if st.button("✅ タイピングチェック", key=f"typing_check_btn_{lesson_index}"):
+                if normalize_text(user_typing) == normalize_text(lesson['en']):
+                    st.session_state[f"typing_correct_{lesson_index}"] = True
+                    st.success("🎉 正解です！")
+                else:
+                    st.session_state[f"typing_correct_{lesson_index}"] = False
+                    st.error("❌ 間違いがあります。もう一度確認してください。")
+
+        with col2:
+            if st.button("😔 ギブアップ", key=f"typing_giveup_btn_{lesson_index}"):
+                st.session_state[f"typing_giveup_{lesson_index}"] = True
+
+        # ギブアップ時の正解表示
+        if st.session_state.get(f"typing_giveup_{lesson_index}", False):
+            st.info(f"💡 正解: {lesson['en']}")
+            st.session_state[f"typing_correct_{lesson_index}"] = True  # ギブアップでも次の問題に進める
     elif mode_choice == "穴埋め":
         st.markdown("### 🎯 穴埋めテスト")
         template = lesson["en"]
         gaps = lesson["gaps"]
         for i, word in enumerate(gaps):
             template = template.replace(word, f"___({i+1})___")
-        st.markdown(f"**穴埋め英文:** {template}")
+        st.markdown(f"<div style='font-size: 1.5em; font-weight: bold;'>{template}</div>", unsafe_allow_html=True)
         gap_answers = []
         for i in range(len(gaps)):
             ans = st.text_input(f"{i+1}. 空欄に入る単語", key=f"gap_learning_{lesson_index}_{i}")
             gap_answers.append(ans.strip())
-        if st.button("✅ 穴埋めチェック", key=f"check_gap_learning_{lesson_index}"):
-            correct = 0
-            for i, correct_word in enumerate(gaps):
-                user_word = gap_answers[i].lower()
-                if user_word == correct_word.lower():
-                    st.success(f"{i+1}. 正解！({correct_word})")
-                    correct += 1
+
+        col1, col2 = st.columns(2)
+        with col1:
+            if st.button("✅ 穴埋めチェック", key=f"check_gap_learning_{lesson_index}"):
+                correct = 0
+                for i, correct_word in enumerate(gaps):
+                    user_word = gap_answers[i].lower()
+                    if user_word == correct_word.lower():
+                        st.success(f"{i+1}. 正解！({correct_word})")
+                        correct += 1
+                    else:
+                        st.error(f"{i+1}. 不正解 ❌")
+                st.info(f"正解数：{correct} / {len(gaps)}")
+                if correct == len(gaps):
+                    st.session_state[f"gap_correct_{lesson_index}"] = True
+                    st.success("🎉 全問正解です！")
                 else:
-                    st.error(f"{i+1}. 不正解 ❌")
-            st.info(f"正解数：{correct} / {len(gaps)}")
-            if correct == len(gaps):
-                st.session_state[f"gap_correct_{lesson_index}"] = True
-                st.success("🎉 全問正解です！")
-            else:
-                st.session_state[f"gap_correct_{lesson_index}"] = False
+                    st.session_state[f"gap_correct_{lesson_index}"] = False
+
+        with col2:
+            if st.button("😔 ギブアップ", key=f"giveup_btn_{lesson_index}"):
+                st.session_state[f"giveup_{lesson_index}"] = True
+
+        # ギブアップ時の正解表示
+        if st.session_state.get(f"giveup_{lesson_index}", False):
+            st.info(f"💡 正解: {', '.join(gaps)}")
+            st.session_state[f"gap_correct_{lesson_index}"] = True  # ギブアップでも次の問題に進める
 
     # 5. どちらか合格で「次の問題へ」
     if st.session_state.get(f"typing_correct_{lesson_index}", False) or st.session_state.get(f"gap_correct_{lesson_index}", False):
@@ -255,7 +311,7 @@ else:  # ランダム学習モード
         for i, word in enumerate(gaps):
             template = template.replace(word, f"___({i+1})___")
 
-        st.markdown(f"**穴埋め英文:** {template}")
+        st.markdown(f"<div style='font-size: 2em; font-weight: bold;'>穴埋め英文: {template}</div>", unsafe_allow_html=True)
 
         user_answers = []
         for i in range(len(gaps)):
