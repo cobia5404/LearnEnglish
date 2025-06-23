@@ -120,13 +120,24 @@ audio_mode = st.sidebar.radio(
 )
 st.session_state["audio_display_mode"] = audio_mode
 
+if 'learning_mode' not in st.session_state:
+    st.session_state.learning_mode = "順番に学習"
+
 with st.sidebar:
+    modes = ["順番に学習", "ランダム出題"]
+    icons = ["list-ol", "shuffle"]
+
+    try:
+        default_ix = modes.index(st.session_state.learning_mode)
+    except ValueError:
+        default_ix = 0
+
     mode = option_menu(
         None,
-        ["順番に学習", "ランダム出題"],
-        icons=["list-ol", "shuffle"],
+        modes,
+        icons=icons,
         menu_icon="cast",
-        default_index=0,
+        default_index=default_ix,
         orientation="vertical",
         styles={
             "container": {"padding": "0!important", "background-color": "#f8f9fa"},
@@ -146,10 +157,23 @@ with st.sidebar:
             },
         }
     )
+    st.session_state.learning_mode = mode
 
-if mode == "順番に学習":
+if st.session_state.learning_mode == "順番に学習":
+    # 順番に学習モードの時だけ開始番号入力欄を表示
+    start_num = st.sidebar.number_input(
+        "開始番号:",
+        min_value=1,
+        max_value=len(lessons),
+        value=int(st.session_state.current_lesson) + 1,
+        key="start_number_input"
+    )
+    if start_num:
+        st.session_state.current_lesson = start_num - 1
+
     lesson_order = list(range(len(lessons)))
-elif mode == "ランダム出題":
+
+elif st.session_state.learning_mode == "ランダム出題":
     if "random_order" not in st.session_state or len(st.session_state["random_order"]) != len(lessons):
         st.session_state["random_order"] = random.sample(range(len(lessons)), len(lessons))
     lesson_order = st.session_state["random_order"]
