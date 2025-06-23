@@ -8,7 +8,9 @@ from gtts import gTTS
 import base64
 import hashlib
 from streamlit_option_menu import option_menu
+import streamlit.components.v1 as components
 
+@st.cache_data
 # テキスト正規化関数
 def normalize_text(text):
     return re.sub(r'[^a-z0-9]', '', text.lower())
@@ -31,6 +33,7 @@ if 'current_lesson' not in st.session_state:
 # ---------------------------
 # gTTSを使用した読み上げ関数（英語・日本語対応）
 # ---------------------------
+@st.cache_data
 def text_to_speech(text, lang="en"):
     """
     gTTSを使用してテキストを音声に変換し、base64エンコードされたオーディオデータを返す
@@ -105,6 +108,17 @@ question_mode = st.sidebar.radio(
     key="question_mode_radio"
 )
 st.session_state["question_mode_setting"] = question_mode
+
+if "audio_display_mode" not in st.session_state:
+    st.session_state["audio_display_mode"] = "▶️ ボタンで聞く" # Default
+
+audio_mode = st.sidebar.radio(
+    "音声の聞き方:",
+    ["▶️ ボタンで聞く", "🎵 プレーヤーで聞く"],
+    index=0 if st.session_state["audio_display_mode"] == "▶️ ボタンで聞く" else 1,
+    key="audio_display_radio"
+)
+st.session_state["audio_display_mode"] = audio_mode
 
 with st.sidebar:
     mode = option_menu(
@@ -184,13 +198,65 @@ st.session_state["mode_choice_global"] = mode_choice
 
 # 2. 英文聞き取り
 st.markdown(f"#### 👂 英文聞き取り ({lesson_order[lesson_index] + 1} / {len(lessons)})")
-speak_text(lesson['en'], lang="en-US", label="")
+
+# --- 音声再生ロジックの改善 ---
+
+# 1. 音声データを事前に準備
+audio_base64 = text_to_speech(lesson['en'], lang="en")
+audio_id = f"audio-player-{lesson_index}"
+
+# 2. 再生モードに応じてUIを出し分ける
+show_player_mode = st.session_state.get("audio_display_mode") == "🎵 プレーヤーで聞く"
+
+if show_player_mode:
+    # --- モード1: 音声プレーヤーを全幅で表示 ---
+    if audio_base64:
+        st.audio(f"data:audio/mp3;base64,{audio_base64}", format="audio/mp3")
+else:
+    # --- モード2: ボタンを中央に配置して表示 ---
+    col1, col2, col3 = st.columns([2, 3, 2])
+    with col2:
+        if audio_base64:
+            button_html = f'''
+            <style>
+                .custom_button {{
+                    width: 100%;
+                    padding: 0.5rem 1rem;
+                    border-radius: 0.5rem;
+                    border: 1px solid rgba(49, 51, 63, 0.2);
+                    background-color: #FFFFFF;
+                    color: #31333F;
+                    font-weight: 400;
+                    text-align: center;
+                    cursor: pointer;
+                    transition: all 0.2s ease-in-out;
+                }}
+                .custom_button:hover {{
+                    border-color: #ff4b4b;
+                    color: #ff4b4b;
+                }}
+                .custom_button:active, .custom_button:focus {{
+                    border-color: #ff4b4b;
+                    color: #ff4b4b;
+                    box-shadow: 0 0 0 0.2rem rgba(255, 75, 75, 0.5);
+                    outline: none;
+                }}
+            </style>
+            <audio id="{audio_id}" src="data:audio/mp3;base64,{audio_base64}"></audio>
+            <div style="text-align: center;">
+                <button onclick="document.getElementById('{audio_id}').play()" class="custom_button">
+                    ▶️ 音声を聞く
+                </button>
+            </div>
+            '''
+            components.html(button_html, height=50)
 
 # 3. ヒントボタン
-if st.button("💡 ヒント(日本語訳)", key=f"hint_btn_{lesson_index}"):
+if st.button("💡 日本語訳", key=f"hint_btn_{lesson_index}"):
     st.session_state[f"show_hint_{lesson_index}"] = True
 if st.session_state.get(f"show_hint_{lesson_index}", False):
-    st.info(f"日本語訳: {lesson['ja']}")
+    # st.info(f"日本語訳: {lesson['ja']}")
+    st.info(lesson['ja'])
 
 # 4. 問題出題
 typing_correct = st.session_state.get(f"typing_correct_{lesson_index}", False)
