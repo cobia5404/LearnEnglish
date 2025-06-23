@@ -93,6 +93,19 @@ st.sidebar.markdown("## 📊 学習進捗")
 st.sidebar.progress(progress)
 st.sidebar.markdown(f"完了: {completed_count} / {total_count} レッスン")
 
+# 新しい問題の出題方法の設定
+if "question_mode_setting" not in st.session_state:
+    st.session_state["question_mode_setting"] = "毎回全文タイピングから始める"
+
+st.sidebar.markdown("## ⚙️ 設定")
+question_mode = st.sidebar.radio(
+    "新しい問題の出題方法:",
+    ["毎回全文タイピングから始める", "前回の出題方法を引き継ぐ"],
+    index=0 if st.session_state["question_mode_setting"] == "毎回全文タイピングから始める" else 1,
+    key="question_mode_radio"
+)
+st.session_state["question_mode_setting"] = question_mode
+
 with st.sidebar:
     mode = option_menu(
         None,
@@ -133,8 +146,6 @@ lesson_index = int(st.session_state.current_lesson)
 lesson = lessons[lesson_order[lesson_index]]
 
 # ここから下は「段階的学習」モードのUI・ロジックを常に表示
-st.markdown(f"#### 👂 英文聞き取り ({lesson_order[lesson_index] + 1} / {len(lessons)})")
-speak_text(lesson['en'], lang="en-US", label="")
 
 # グローバルな選択状態を使う
 if "mode_choice_global" not in st.session_state:
@@ -170,6 +181,10 @@ mode_choice = option_menu(
     }
 )
 st.session_state["mode_choice_global"] = mode_choice
+
+# 2. 英文聞き取り
+st.markdown(f"#### 👂 英文聞き取り ({lesson_order[lesson_index] + 1} / {len(lessons)})")
+speak_text(lesson['en'], lang="en-US", label="")
 
 # 3. ヒントボタン
 if st.button("💡 ヒント(日本語訳)", key=f"hint_btn_{lesson_index}"):
@@ -247,10 +262,20 @@ if st.session_state.get(f"typing_correct_{lesson_index}", False) or st.session_s
     if st.button("次の問題へ", key=f"next_{lesson_index}"):
         # 完了レッスンを記録
         st.session_state.completed_lessons.add(lesson_order[lesson_index])
+
+        # current_lessonを更新（次のレッスンへ）
         st.session_state.current_lesson = (lesson_index + 1) % len(lessons)
+
+        # 設定に応じて出題方法をリセット
+        if st.session_state["question_mode_setting"] == "毎回全文タイピングから始める":
+            st.session_state["mode_choice_global"] = "全文タイピング"
+
         # フラグリセット
         st.session_state[f"typing_correct_{lesson_index}"] = False
         st.session_state[f"gap_correct_{lesson_index}"] = False
         st.session_state[f"show_hint_{lesson_index}"] = False
-        # 入力欄のリセットは削除（ウィジェットキーと競合するため）
+        st.session_state[f"typing_giveup_{lesson_index}"] = False
+        st.session_state[f"giveup_{lesson_index}"] = False
+
+        # 画面をリフレッシュ
         st.rerun()
